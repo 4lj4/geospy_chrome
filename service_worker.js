@@ -1,3 +1,22 @@
+/*
+    Copyright 2024 LJ. All rights reserved.
+
+    The code, text, and images contained in this file are the exclusive property
+    of LJ. You may not reproduce, distribute, modify, or
+    otherwise use this file except in accordance with the terms of any license or
+    agreement provided by LJ.
+
+    Unauthorized use, reproduction, or distribution of this file or any portion
+    of it may result in severe civil and criminal penalties, and will be prosecuted
+    to the maximum extent possible under the law.
+    
+    THIS CODE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+    OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND/OR FITNESS FOR A PARTICULAR PURPOSE.
+
+    LJ
+*/
+
 console.log("Geospy service worker is running");
 
 /*
@@ -42,7 +61,7 @@ async function generateResultHTML(json_data, orig_img_src) {
         return resultHTML;
     } catch (error) {
         console.error(error);
-        return "error generating results for the following json data: " + json_data;
+        return "error generating results for the following json data: " + JSON.stringify(json_data);
     }
 }
 
