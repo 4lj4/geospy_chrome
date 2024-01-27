@@ -13,10 +13,43 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     console.log("Context menu clicked");
 
     if (info.menuItemId === "geospyImageSearch") {
-        console.log("Sending message to content script");
-        chrome.tabs.create({url: chrome.extension.getURL('test.html')});
+        console.log("geospyImageSearch");
 
-        // Send a message to the content script with the image URL
-        chrome.tabs.sendMessage(tab.id, { action: "geospyImageSearch", imageUrl: info.srcUrl });
+        // Create a new tab with the result.html file
+        chrome.tabs.create({url: chrome.extension.getURL('result.html')}, function (newTab) {
+            fetch(info.srcUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('GET failed: ', response);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    console.log('Blob:', blob);
+
+                    // Create a FormData object to send the image as multipart/form-data
+                    const formData = new FormData();
+                    formData.append("image", blob, "image.jpg");
+
+                    // Make a POST request to the API endpoint
+                    return fetch("https://us-central1-phaseoneai.cloudfunctions.net/locate_image", {
+                        method: "POST",
+                        body: formData,
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Inject the result into the new tab
+                    chrome.tabs.executeScript(newTab.id, {
+                        code: `document.getElementById('result').innerText = ${JSON.stringify(data)};`
+                    });
+
+                    console.log("API Response:", data);
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error("Error:", error);
+                });
+        });
     }
 });
