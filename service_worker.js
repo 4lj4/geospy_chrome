@@ -14,7 +14,7 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 
     if (info.menuItemId === "geospyImageSearch") {
         // Create a new tab for the "please wait" dialog
-        chrome.tabs.create({url: chrome.extension.getURL('loading.html')}, function (loadingTab) {
+        chrome.tabs.create({url: chrome.runtime.getURL('loading.html')}, function (loadingTab) {
             fetch(info.srcUrl)
                 .then(response => {
                     if (!response.ok) {
@@ -57,16 +57,17 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
 });
 
 function loadFile(filename, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4 && xhr.status == 200) {
-        callback(xhr.responseText);
-      }
-    };
-    xhr.open("GET", chrome.extension.getURL(filename), true);
-    xhr.send();
-  }
-
+    fetch(chrome.runtime.getURL(filename))
+        .then(response => {
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+        }
+        return response.text();
+        })
+        .then(callback)
+    .catch(error => console.error(error));
+}
+  
 function generateResultHTML(data, orig_img_src, callback) {
     loadFile('result-template.html', function(htmlContent) {
         const resultMessageWithBreaks = data.message.replace(/\n/g, '<br>');
