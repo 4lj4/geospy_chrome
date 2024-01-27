@@ -1,0 +1,56 @@
+<!-- result-template.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoSpy Image Search Result</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000;
+            color: #8b8b8b; /* Set text color to #8b8b8b */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .result-container {
+            max-width: 600px;
+            padding: 20px;
+            background-color: transparent; /* Transparent background */
+            border: 2px dashed #8b8b8b; /* Dashed border with color #8b8b8b */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .result-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 70vh; /* Set a percentage of the viewport height */
+            margin-bottom: 10px;
+            border-radius: 8px;
+            align-self: center; /* Center the image within the container */
+        }
+        .result-message {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #8b8b8b; /* Set text color to #8b8b8b */
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <img src="{{imageUrl}}" alt="Result Image" class="result-image">
+        <div class="result-message">
+            <p>{{resultMessage}}</p>
+        </div>
+    </div>
+</body>
+</html>

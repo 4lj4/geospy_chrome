@@ -13,57 +13,73 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
     console.log("Context menu clicked");
 
     if (info.menuItemId === "geospyImageSearch") {
-        console.log("Sending message to content script");
+        // Create a new tab for the "please wait" dialog
+        chrome.tabs.create({url: chrome.extension.getURL('loading.html')}, function (loadingTab) {
+            fetch(info.srcUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('GET failed: ', response);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    console.log('Blob:', blob);
 
-        fetch(info.srcUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('GET failed: ', response);
-                }
-                return response.blob();
-            })
-            .then(blob => {
-                console.log('Blob:', blob);
+                    // Create a FormData object to send the image as multipart/form-data
+                    const formData = new FormData();
+                    formData.append("image", blob, "image.jpg");
 
-                // Create a FormData object to send the image as multipart/form-data
-                const formData = new FormData();
-                formData.append("image", blob, "image.jpg");
+                    // Make a POST request to the API endpoint
+                    return fetch("https://us-central1-phaseoneai.cloudfunctions.net/locate_image", {
+                        method: "POST",
+                        body: formData,
+                    });
+                })
+                .then(response => response.json())
+                .then(data => {                    
+                    console.log("API Response:", data);
+                    
+                    generateResultHTML(data, info.srcUrl, function(htmlContent) {
+                        chrome.tabs.remove(loadingTab.id);
+                        chrome.tabs.create({url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent)});
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
 
-                // Make a POST request to the API endpoint
-                return fetch("https://us-central1-phaseoneai.cloudfunctions.net/locate_image", {
-                    method: "POST",
-                    body: formData,
+                    generateErrorHTML(error, function(htmlContent) {
+                        chrome.tabs.remove(loadingTab.id);
+                        chrome.tabs.create({url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent)});
+                    });
                 });
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Generate HTML content with the result
-                const htmlContent = generateHTML(data);
-
-                // Create a new tab with the generated HTML content
-                chrome.tabs.create({url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent)});
-
-                console.log("API Response:", data);
-            })
-            .catch(error => {
-                // Handle errors
-                console.error("Error:", error);
-            });
+        });
     }
 });
 
-function generateHTML(data) {
-    return `
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>GeoSpy Image Search Result</title>
-        </head>
-        <body>
-            <div id="result">${JSON.stringify(data)}</div>
-        </body>
-        </html>
-    `;
+function loadFile(filename, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4 && xhr.status == 200) {
+        callback(xhr.responseText);
+      }
+    };
+    xhr.open("GET", chrome.extension.getURL(filename), true);
+    xhr.send();
+  }
+
+function generateResultHTML(data, orig_img_src, callback) {
+    loadFile('result-template.html', function(htmlContent) {
+        const resultMessageWithBreaks = data.message.replace(/\n/g, '<br>');
+        const resultHTML = htmlContent.replace('{{resultMessage}}', resultMessageWithBreaks)
+                                      .replace('{{imageUrl}}', orig_img_src);
+        callback(resultHTML);
+    });
+}
+
+function generateErrorHTML(error, callback) {
+    loadFile('error-template.html', function(htmlContent) {
+        const errorMessageWithBreaks = data.message.replace(/\n/g, '<br>');
+        const errorHTML = htmlContent.replace('{{errorMessage}}', errorMessageWithBreaks);
+        callback(errorHTML);
+    });
 }
