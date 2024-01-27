@@ -1,4 +1,3 @@
-<!-- loading.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,24 +15,53 @@
             height: 100vh;
             margin: 0;
         }
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #646464;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            margin-bottom: 16px;
-            animation: spin 1s linear infinite;
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            text-align: center;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .footer-text {
+            color: #8b8b8b; /* Set text color to #8b8b8b */
+            font-size: 28px;
+        }
+        .green-bold {
+            color: #00ec14;
+            font-weight: bold;
+        }
+        .graylark {
+            color: #332f49;
+            font-weight: bold;
+        }
+        .profile-picture {
+            width: 100px; /* Adjust the width of the profile picture */
+            height: 100px; /* Adjust the height of the profile picture */
+            border-radius: 50%; /* Create a circular shape for the profile picture */
+            margin-right: 20px; /* Add some spacing between the picture and text */
+        }
+        .site-header {
+            text-align: center;
+            padding: 20px;
+        }
+        .header-text {
+            color: #7c7b7b;
+            margin: 0;
+            font-size: 48px;
         }
     </style>
 </head>
 <body>
-    <div class="loading-container">
-        <div class="loading-spinner"></div>
+    <header class="site-header">
+        <h1 class="header-text">Processing image...</h1>
+    </header>
+    <div class="footer">
+        <dev class="footer-text">
+            <img src="lj4.gif" alt="Profile Picture" class="profile-picture">
+            <p>Developed by <span class="green-bold">LJ4</span> (Add me on discord!)</p>
+            <p>Powered by <span class="graylark">graylark.io</span></p>
+            <img src="graylark.png" alt="Profile Picture" class="profile-picture">
+        </dev>
     </div>
 </body>
 </html>

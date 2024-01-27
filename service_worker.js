@@ -1,56 +1,6 @@
 console.log("Geospy service worker is running");
 
 /*
-    Add the locate button to the context menu
-*/
-chrome.runtime.onInstalled.addListener(function () {
-    chrome.contextMenus.create({
-        id: "geospyImageSearch",
-        title: "Locate using GeoSpy",
-        contexts: ["image"]
-    });
-});
-
-/*
-    context menu onClicked callback
-*/
-chrome.contextMenus.onClicked.addListener(async function (info, tab) {
-    if (info.menuItemId === "geospyImageSearch") {
-
-        // Create the loading page, indicating that we are waiting for the API to respond
-        const loadingTab = await chrome.tabs.create({ url: chrome.runtime.getURL('loading.html') }); 
-
-        try {
-            
-            // Download the image selected to upload to geospy
-            const blob = await fetchBlob(info.srcUrl);
-
-            // Make request to the geospy API
-            const response = await callGeospyAPI(blob);
-            const response_json_data = await response.json(); // Parse the response JSON
-            console.log("Geospy API response:", response_json_data);
-
-            // Generate a result page
-            const htmlContent = await async_generateResultHTML(response_json_data, info.srcUrl); 
-
-            // Close the loading tab and show the result page HTML
-            await chrome.tabs.remove(loadingTab.id);
-            await chrome.tabs.create({ url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent) });
-
-        } catch (error) {
-            console.error("Geospy API error:", error);
-
-            // Generate an error page
-            const htmlContent = await async_generateErrorHTML(error);
-
-            // Close the loading tab and show the error page HTML
-            await chrome.tabs.remove(loadingTab.id);
-            await chrome.tabs.create({ url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent) });
-        }
-    }
-});
-
-/*
     Returns the binary blob of a file at the give URL.
 */
 async function fetchBlob(srcUrl) {
@@ -59,6 +9,57 @@ async function fetchBlob(srcUrl) {
         throw new Error('GET failed: ', response);
     }
     return response.blob();
+}
+
+/*
+    Used to get loading.html, result-template.html, and error-template.html
+*/
+async function getHTMLFile(url) {
+    try {
+        const response = await fetch(chrome.runtime.getURL(url));
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${url}: ${response.status} ${response.statusText}`);
+        }
+
+        return await response.text();
+    } catch (error) {
+        console.error(error);f
+        // You might want to handle the error appropriately or propagate it further.
+        throw error;
+    }
+}
+
+/*
+    Construct a modified version of result-template.html with the provided json data and image
+*/
+async function generateResultHTML(json_data, orig_img_src) {
+    try {
+        const resultMessageWithBreaks = json_data.message.replace(/\n/g, '<br>');
+        const htmlContent = await getHTMLFile('result-template.html');
+        const resultHTML = htmlContent.replace('{{resultMessage}}', resultMessageWithBreaks)
+                                      .replace('{{imageUrl}}', orig_img_src);
+        return resultHTML;
+    } catch (error) {
+        console.error(error);
+        // Handle the error appropriately or propagate it further.
+        throw error;
+    }
+}
+
+/*
+    Construct a modified version of error-template.html with the provided error
+*/
+async function generateErrorHTML(error) {
+    try {
+        const htmlContent = await getHTMLFile('error-template.html');
+        const errorHTML = htmlContent.replace('{{errorMessage}}', error);
+        return errorHTML;
+    } catch (error) {
+        console.error(error);
+        // Handle the error appropriately or propagate it further.
+        throw error;
+    }
 }
 
 /*
@@ -74,62 +75,52 @@ async function callGeospyAPI(blob) {
     return response;
 }
 
-/*
-    async wrapper around generateResultHTML
-*/
-async function async_generateResultHTML(response_json_data, srcUrl) {
-    return new Promise((resolve) => {
-        generateResultHTML(response_json_data, srcUrl, (htmlContent) => {
-            resolve(htmlContent);
-        });
-    });
-}
+
 
 /*
-    async wrapper around generateErrorHTML
+    Add the locate button to the context menu
 */
-async function async_generateErrorHTML(error) {
-    return new Promise((resolve) => {
-        generateErrorHTML(error, (htmlContent) => {
-            resolve(htmlContent);
-        });
+chrome.runtime.onInstalled.addListener(function () {
+    chrome.contextMenus.create({
+        id: "geospyImageSearch",
+        title: "Locate using GeoSpy",
+        contexts: ["image"]
     });
-}
+});
 
 /*
-    "load" the given file (could be any url to be fair) then execute the provided callback
+    context menu onClicked callback
 */
-function loadFile(filename, callback) {
-    fetch(chrome.runtime.getURL(filename))
-        .then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to fetch ${filename}: ${response.status} ${response.statusText}`);
+chrome.contextMenus.onClicked.addListener(async function (info, tab) {
+    if (info.menuItemId === "geospyImageSearch") {
+        // Create the loading page, indicating that we are waiting for the API to respond
+        const loadingTab = await chrome.tabs.create({ url: chrome.runtime.getURL('loading.html') }); 
+
+        try {
+            // Download the image selected to upload to geospy
+            const blob = await fetchBlob(info.srcUrl);
+
+            // Make request to the geospy API
+            const response = await callGeospyAPI(blob);
+            const response_json_data = await response.json(); // Parse the response JSON
+            console.log("Geospy API response:", response_json_data);
+
+            // Generate a result page
+            generateResultHTML(response_json_data, info.srcUrl).then(htmlContent => {
+                // Close the loading tab and show the result page HTML
+                chrome.tabs.create({ url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent) });
+                chrome.tabs.remove(loadingTab.id);
+            });
+
+        } catch (error) {
+            console.error("Error occured while attempting to interact with geospy API:", error);
+
+            // Generate an error page
+            generateErrorHTML(error).then(htmlContent => {
+                // Close the loading tab and show the error page HTML
+                chrome.tabs.remove(loadingTab.id);
+                chrome.tabs.create({ url: 'data:text/html;charset=UTF-8,' + encodeURIComponent(htmlContent) });
+            });
         }
-        return response.text();
-        })
-        .then(callback)
-    .catch(error => console.error(error));
-}
-
-/*
-    Executes the provided callback with the HTML for a result page for the given json_data + img
-*/
-function generateResultHTML(json_data, orig_img_src, callback) {
-    loadFile('result-template.html', function(htmlContent) {
-        const resultMessageWithBreaks = json_data.message.replace(/\n/g, '<br>');
-        const resultHTML = htmlContent.replace('{{resultMessage}}', resultMessageWithBreaks)
-                                      .replace('{{imageUrl}}', orig_img_src);
-        callback(resultHTML);
-    });
-}
-
-/*
-    Executes the provided callback with the HTML for an error page containing the provided error text
-*/
-function generateErrorHTML(error, callback) {
-    loadFile('error-template.html', function(htmlContent) {
-        const errorMessageWithBreaks = error.replace(/\n/g, '<br>');
-        const errorHTML = htmlContent.replace('{{errorMessage}}', errorMessageWithBreaks);
-        callback(errorHTML);
-    });
-}
+    }
+});

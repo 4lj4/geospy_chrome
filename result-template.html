@@ -18,30 +18,65 @@
             margin: 0;
         }
         .result-container {
-            max-width: 600px;
+            max-width: 900px;
+            max-height: 90vh; /* Set a maximum height of 90% of the viewport height */
+            overflow-y: auto; /* Add vertical scroll if content exceeds the max height */
             padding: 20px;
             background-color: transparent; /* Transparent background */
-            border: 2px dashed #8b8b8b; /* Dashed border with color #8b8b8b */
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 3px dashed #00ec14; /* Dashed border with color #8b8b8b */
             text-align: left;
-            margin-bottom: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+        .result-container::-webkit-scrollbar {
+            width: 12px; /* Set the width of the scrollbar */
+        }
+        .result-container::-webkit-scrollbar-thumb {
+            background-color: #00ec14; /* Set the color of the scrollbar thumb (the draggable part) */
+            border-radius: 3px; /* Set border-radius to make it rounder */
+        }
+        .result-container::-webkit-scrollbar-track {
+            background-color: #000; /* Set the color of the scrollbar track (the non-draggable part) */
+        }
+        .result-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #8b8b8b; /* Set text color to #8b8b8b */
+        }
         .result-image {
             max-width: 100%;
             height: auto;
-            max-height: 70vh; /* Set a percentage of the viewport height */
+            max-height: 80vh; /* Set a percentage of the viewport height */
             margin-bottom: 10px;
             border-radius: 8px;
             align-self: center; /* Center the image within the container */
         }
         .result-message {
-            font-size: 16px;
+            font-size: 24px;
             line-height: 1.5;
             color: #8b8b8b; /* Set text color to #8b8b8b */
+            text-align: center;
+        }
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .footer-text {
+            color: #8b8b8b; /* Set text color to #8b8b8b */
+            font-size: 14px;
+        }
+        .green-bold {
+            color: #00ec14;
+            font-weight: bold;
+        }
+        .graylark {
+            color: #332f49;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -51,6 +86,12 @@
         <div class="result-message">
             <p>{{resultMessage}}</p>
         </div>
+    </div>
+    <div class="footer">
+        <dev class="footer-text">
+            <p>Developed by <span class="green-bold">LJ4</span> (Add me on discord!)</p>
+            <p>Powered by <span class="graylark">graylark.io</span></p>
+        </dev>
     </div>
 </body>
 </html>
