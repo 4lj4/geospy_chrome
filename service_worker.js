@@ -10,10 +10,7 @@ chrome.runtime.onInstalled.addListener(function () {
 });
 
 chrome.contextMenus.onClicked.addListener(function (info, tab) {
-    console.log("Context menu clicked");
-
     if (info.menuItemId === "geospyImageSearch") {
-        // Create a new tab for the "please wait" dialog
         chrome.tabs.create({url: chrome.runtime.getURL('loading.html')}, function (loadingTab) {
             fetch(info.srcUrl)
                 .then(response => {
@@ -25,11 +22,9 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
                 .then(blob => {
                     console.log('Blob:', blob);
 
-                    // Create a FormData object to send the image as multipart/form-data
                     const formData = new FormData();
                     formData.append("image", blob, "image.jpg");
 
-                    // Make a POST request to the API endpoint
                     return fetch("https://us-central1-phaseoneai.cloudfunctions.net/locate_image", {
                         method: "POST",
                         body: formData,
@@ -79,7 +74,7 @@ function generateResultHTML(data, orig_img_src, callback) {
 
 function generateErrorHTML(error, callback) {
     loadFile('error-template.html', function(htmlContent) {
-        const errorMessageWithBreaks = data.message.replace(/\n/g, '<br>');
+        const errorMessageWithBreaks = error.replace(/\n/g, '<br>');
         const errorHTML = htmlContent.replace('{{errorMessage}}', errorMessageWithBreaks);
         callback(errorHTML);
     });
