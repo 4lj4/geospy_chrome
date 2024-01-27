@@ -15,6 +15,23 @@
             height: 100vh;
             margin: 0;
         }
+
+        /*
+            Text at top
+        */
+        .site-header {
+            text-align: center;
+            padding: 20px;
+        }
+        .header-text {
+            color: #7c7b7b;
+            margin: 0;
+            font-size: 48px;
+        }
+        
+        /*
+            Footer
+        */
         .footer {
             display: flex;
             align-items: center;
@@ -40,14 +57,18 @@
             border-radius: 50%; /* Create a circular shape for the profile picture */
             margin-right: 20px; /* Add some spacing between the picture and text */
         }
-        .site-header {
+
+        /*
+            License disclaimer
+        */
+        .disclaimer {
+            font-size: 14px;
+            color: #aaaaaa;
             text-align: center;
-            padding: 20px;
-        }
-        .header-text {
-            color: #7c7b7b;
-            margin: 0;
-            font-size: 48px;
+            margin-top: auto; /* Pushes the disclaimer to the very bottom */
+            position: fixed;
+            width: 100%;
+            bottom: 0;
         }
     </style>
 </head>
@@ -62,6 +83,9 @@
             <p>Powered by <span class="graylark">graylark.io</span></p>
             <img src="graylark.png" alt="Profile Picture" class="profile-picture">
         </dev>
+        <div class="disclaimer">
+            <p>This software is officially licensed to utilise the Geospy API provided by Graylark Technologies LLC</p>
+        </div>
     </div>
 </body>
 </html>

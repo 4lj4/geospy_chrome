@@ -42,8 +42,7 @@ async function generateResultHTML(json_data, orig_img_src) {
         return resultHTML;
     } catch (error) {
         console.error(error);
-        // Handle the error appropriately or propagate it further.
-        throw error;
+        return "error generating results for the following json data: " + json_data;
     }
 }
 
@@ -57,8 +56,7 @@ async function generateErrorHTML(error) {
         return errorHTML;
     } catch (error) {
         console.error(error);
-        // Handle the error appropriately or propagate it further.
-        throw error;
+        return "error";
     }
 }
 

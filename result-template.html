@@ -17,9 +17,13 @@
             height: 100vh;
             margin: 0;
         }
+
+        /*
+            Result box
+        */
         .result-container {
             max-width: 900px;
-            max-height: 90vh; /* Set a maximum height of 90% of the viewport height */
+            max-height: 80vh; /* Set a maximum height of 90% of the viewport height */
             overflow-y: auto; /* Add vertical scroll if content exceeds the max height */
             padding: 20px;
             background-color: transparent; /* Transparent background */
@@ -28,37 +32,39 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
         }
         .result-container::-webkit-scrollbar {
             width: 12px; /* Set the width of the scrollbar */
         }
         .result-container::-webkit-scrollbar-thumb {
             background-color: #00ec14; /* Set the color of the scrollbar thumb (the draggable part) */
-            border-radius: 3px; /* Set border-radius to make it rounder */
+            border-radius: 6px; /* Set border-radius to make it rounder */
         }
         .result-container::-webkit-scrollbar-track {
             background-color: #000; /* Set the color of the scrollbar track (the non-draggable part) */
         }
-        .result-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #8b8b8b; /* Set text color to #8b8b8b */
-        }
+
         .result-image {
             max-width: 100%;
+            height: 80%;
+            max-height: 80%; /* Set a percentage of the viewport height */
             height: auto;
-            max-height: 80vh; /* Set a percentage of the viewport height */
             margin-bottom: 10px;
             border-radius: 8px;
             align-self: center; /* Center the image within the container */
+            object-fit: cover;
         }
         .result-message {
-            font-size: 24px;
+            font-size: 18px;
             line-height: 1.5;
-            color: #8b8b8b; /* Set text color to #8b8b8b */
+            flex: 1; /* Let the text fill the remaining space */
             text-align: center;
         }
+
+        /*
+            Footer
+        */
         .footer {
             display: flex;
             align-items: center;
@@ -78,11 +84,24 @@
             color: #332f49;
             font-weight: bold;
         }
+
+        /*
+            License disclaimer
+        */
+        .disclaimer {
+            font-size: 14px;
+            color: #aaaaaa;
+            text-align: center;
+            margin-top: auto; /* Pushes the disclaimer to the very bottom */
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
     </style>
 </head>
 <body>
     <div class="result-container">
-        <img src="{{imageUrl}}" alt="Result Image" class="result-image">
+        <img src="{{imageUrl}}" class="result-image">
         <div class="result-message">
             <p>{{resultMessage}}</p>
         </div>
@@ -92,6 +111,9 @@
             <p>Developed by <span class="green-bold">LJ4</span> (Add me on discord!)</p>
             <p>Powered by <span class="graylark">graylark.io</span></p>
         </dev>
+        <div class="disclaimer">
+            <p>This software is officially licensed to utilise the Geospy API provided by Graylark Technologies LLC</p>
+        </div>
     </div>
 </body>
 </html>
