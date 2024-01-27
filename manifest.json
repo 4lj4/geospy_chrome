@@ -1,0 +1,25 @@
+{
+    "manifest_version": 2,
+    "name": "Locate with GeoSpy",
+    "version": "1.0",
+    "description": "Geolocate images using Geospy from graylark technologies LLC inc. Developed by LJ4",
+    "permissions": [
+        "<all_urls>", 
+        "contextMenus", "activeTab", "storage", "tabs"],
+    "host_permissions": [
+        "*://*/*"
+    ],
+    "icons": {
+        "48": "icon.png"
+    },
+    "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+    },
+    "content_scripts": [
+    {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+    }
+    ]
+}
