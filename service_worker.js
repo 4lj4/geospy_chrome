@@ -37,8 +37,19 @@ async function generateResultHTML(json_data, orig_img_src) {
     try {
         const resultMessageWithBreaks = json_data.message.replace(/\n/g, '<br>');
         const htmlContent = await getHTMLFile('result-template.html');
-        const resultHTML = htmlContent.replace('{{resultMessage}}', resultMessageWithBreaks)
-                                      .replace('{{imageUrl}}', orig_img_src);
+        var resultHTML = htmlContent.replace('{{resultMessage}}', resultMessageWithBreaks)
+                                    .replace('{{imageUrl}}', orig_img_src);
+        
+        const coordRegex = /(\d+\.\d+).*?(-?\d+\.\d+)/; // Assume decimal format for coords, also assumes no other decimals are present in the message
+        const coordinatesMatch = json_data.message.match(coordRegex);
+        if (coordinatesMatch) {
+            const latitude = parseFloat(coordinatesMatch[1]);
+            const longitude = parseFloat(coordinatesMatch[2]);
+            const googleEarthLink = `https://earth.google.com/web/search/${latitude},${longitude}`;
+            const googleEarthButtonHTML = `<a href="${googleEarthLink}" class="google-earth-button" target="_blank"> View location with Google earth</a>`;
+            resultHTML = resultHTML.replace('<!--GOOGLE-EARTH-BUTTON-->', googleEarthButtonHTML);
+        }
+
         return resultHTML;
     } catch (error) {
         console.error(error);
