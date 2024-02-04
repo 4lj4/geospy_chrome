@@ -1,5 +1,7 @@
 console.log("Geospy service worker is running");
 
+const GEOSPY_API_URL = "https://us-central1-phaseoneai.cloudfunctions.net/locate_image";
+
 /*
     Returns the binary blob of a file at the give URL.
 */
@@ -39,17 +41,6 @@ async function generateResultHTML(json_data, orig_img_src) {
         const htmlContent = await getHTMLFile('result-template.html');
         var resultHTML = htmlContent.replace('{{resultMessage}}', resultMessageWithBreaks)
                                     .replace('{{imageUrl}}', orig_img_src);
-        
-        const coordRegex = /(\d+\.\d+).*?(-?\d+\.\d+)/; // Assume decimal format for coords, also assumes no other decimals are present in the message
-        const coordinatesMatch = json_data.message.match(coordRegex);
-        if (coordinatesMatch) {
-            const latitude = parseFloat(coordinatesMatch[1]);
-            const longitude = parseFloat(coordinatesMatch[2]);
-            const googleEarthLink = `https://earth.google.com/web/search/${latitude},${longitude}`;
-            const googleEarthButtonHTML = `<a href="${googleEarthLink}" class="google-earth-button" target="_blank"> View location with Google earth</a>`;
-            resultHTML = resultHTML.replace('<!--GOOGLE-EARTH-BUTTON-->', googleEarthButtonHTML);
-        }
-
         return resultHTML;
     } catch (error) {
         console.error(error);
@@ -77,7 +68,7 @@ async function generateErrorHTML(error) {
 async function callGeospyAPI(blob) {
     const formData = new FormData();
     formData.append("image", blob, "image.jpg");
-    const response = await fetch("https://us-central1-phaseoneai.cloudfunctions.net/locate_image", {
+    const response = await fetch(GEOSPY_API_URL, {
         method: "POST",
         body: formData,
     });
