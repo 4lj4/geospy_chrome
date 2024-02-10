@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +9,17 @@
         body {
             font-family: 'Arial', sans-serif;
             background-color: #000;
-            color: #8b8b8b;
+            color: #fff;
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .container {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,11 +28,11 @@
 
         .result-container {
             max-width: 600px;
-            background-color: transparent;
+            background-color: #000;
             border: 3px dashed #00ec14;
             padding: 20px;
             margin: 20px auto;
-            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
         .result-image {
@@ -41,25 +46,11 @@
             margin-top: 20px;
         }
 
-        .google-earth-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #00ec14;
-            color: #332f49;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
-        }
-
-        .google-earth-button:hover {
-            background-color: #008c0e;
-        }
-
         .footer {
-            margin-top: auto;
             text-align: center;
+            margin-top: auto;
+            background-color: #000;
+            padding: 20px;
         }
 
         .footer-text {
@@ -84,6 +75,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="result-container">
@@ -92,15 +84,19 @@
                 <p>{{resultMessage}}</p>
             </div>
         </div>
-        <div class="footer">
-            <div class="footer-text">
-                <p>Developed by <span class="green-bold">LJ4</span> (Add me on discord!)</p>
-                <p>Powered by <span class="graylark">graylark.io</span></p>
-            </div>
-            <div class="disclaimer">
-                <p>This software is officially licensed to utilise the Geospy API provided by Graylark Technologies LLC</p>
-            </div>
+    </div>
+    <div class="footer">
+        <div class="footer-text">
+            <p>Powered by <span class="graylark">graylark.io</span></p>
+            <p>Developed by <span class="green-bold">LJ4</span> (Add me on Discord!)</p>
+            <p>BTC: bc1qze6cvl4ckxqkjg52mxjdhxdcvqcjl473aprjs3<br>
+            ETH: 0x5bE60e1Dc990f73C41C84a5e3d7724D54f098707<br>
+            XMR: 45jkYEL3hASXTR48wYkfhQbF9ZgTL5Vp4FaWB4dsrVY567Q9pv9qTZsKdX5NmLkkFzGmQfjoEiLyGhdVgcAVU2YKKq2Q2XZ</p>
+        </div>
+        <div class="disclaimer">
+            <p>This software is officially licensed to utilize the GeoSpy API provided by Graylark Technologies LLC</p>
         </div>
     </div>
 </body>
+
 </html>
