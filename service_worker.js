@@ -1,7 +1,6 @@
 console.log("Geospy service worker is running");
 
-const GEOSPY_API_URL = "https://us-central1-phaseoneai.cloudfunctions.net/locate_image";
-
+const GEOSPY_API_URL = "https://locate-image-dev-7cs5mab6na-uc.a.run.app/"
 /*
     Returns the binary blob of a file at the give URL.
 */
